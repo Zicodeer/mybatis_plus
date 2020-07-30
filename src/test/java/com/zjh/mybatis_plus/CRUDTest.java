@@ -1,10 +1,12 @@
 package com.zjh.mybatis_plus;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjh.mybatis_plus.entity.Product;
 import com.zjh.mybatis_plus.entity.User;
 import com.zjh.mybatis_plus.mapper.ProductMapper;
 import com.zjh.mybatis_plus.mapper.UserMapper;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -93,9 +95,34 @@ public class CRUDTest {
     }
     @Test
     public void testSelectPage(){
-        Page<User> page = new Page<>(1,5);
-        Page<User> pageParm = userMapper.selectPage(page,null);
-        List<User> records = pageParm.getRecords();
+
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id","name");
+
+        Page<Map<String,Object>> page = new Page<>(1,5);
+        Page<Map<String,Object>> pageParm = userMapper.selectMapsPage(page,queryWrapper);
+
+        List<Map<String,Object>> records = pageParm.getRecords();
         records.forEach(System.out::println);
+    }
+    @Test
+    public void testDeleteById(){
+        int result = userMapper.deleteById(5L);
+        System.out.println("delete "+result+"column");
+    }
+
+    @Test
+    public void testDeleteBatchIds(){
+        int result = userMapper.deleteBatchIds(Arrays.asList(2,3,4));
+        System.out.println("delete "+result+"column");
+    }
+    @Test
+    public void deleteByMap(){
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("name","simo");
+        map.put("age","22");
+
+        int result = userMapper.deleteByMap(map);
+        System.out.println("delete "+result+"column");
     }
 }
